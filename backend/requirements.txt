@@ -2,13 +2,18 @@
 fastapi==0.111.0
 uvicorn==0.23.2
 
+# Core ML stack (pin explicitly)
+numpy<2
+torch==2.2.2
+sentence-transformers>=5.0.0,<6.0.0
+
 # Transformers / LLMs
 transformers==4.41.0
 accelerate==0.25.0
 sentencepiece==0.1.99
-torch==2.2.2
-sentence-transformers==2.2.2
-numpy<2
+
+# HuggingFace hub (critical pin)
+huggingface-hub>=0.33.4,<1.0
 
 # LangChain & HuggingFace integration
 langchain==0.3.27
@@ -21,3 +26,4 @@ faiss-cpu==1.7.4
 
 # PDF parsing
 PyPDF2
+

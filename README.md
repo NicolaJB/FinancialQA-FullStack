@@ -42,29 +42,43 @@ Financial-QA-FullStack/
 ## Prerequisites
 - Python 3.9+  
 - Node.js 18+ (includes npm)
+
 ## Setup
 
 ### Backend
 ```bash
 cd backend
-python -m venv venv
+
+# Create and activate virtual environment
+python3.11 -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
+
+# Upgrade pip
+pip install --upgrade pip
+
+# Install core dependencies explicitly
+pip install "numpy<2"
+pip install torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu
+
+# Install remaining backend dependencies
 pip install -r requirements.txt
 ```
-Add your .txt or .pdf files to backend/docs/.
-
-### Run the backend:
-
-```bash
-python -m uvicorn app.main:app --reload --port 8000
-````
-### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
 Open http://localhost:3000 in a browser.
+
+Add your .txt and/or .pdf files to:
+```
+backend/docs/
+```
+### Run the backend
+```
+uvicorn app.main:app --reload --port 8000
+```
+### Frontend
+```
+cd frontend
+npm install  
+npm run dev 
+```
 
 ### API Endpoints
 Query: POST /api/query
