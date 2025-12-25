@@ -49,6 +49,7 @@ Financial-QA-FullStack/
 cd backend
 python -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
+cd .. # requirements.txt is in root directory
 pip install -r requirements.txt
 ```
 Add your .txt or .pdf files to backend/docs/.
