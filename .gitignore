@@ -1,0 +1,57 @@
+# ====================
+# Python
+# ====================
+# Python virtual environments
+venv/
+backend/venv/
+backend/frontend_build/cache/
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.egg-info/
+dist/
+build/
+
+# ====================
+# IDE / Editor
+# ====================
+.vscode/
+.idea/
+*.iml
+
+# ====================
+# OS
+# ====================
+.DS_Store
+Thumbs.db
+
+# ====================
+# Data / Models / Vectorstores
+# ====================
+# Vectorstore file - can be rebuilt on startup
+backend/app/services/financialqa/vectorstore.pkl
+
+# HuggingFace cache (optional, can be large)
+~/.cache/huggingface/
+
+# PyTorch / Transformers model files (avoid committing)
+backend/venv/lib/python*/site-packages/torch/
+backend/venv/lib/python*/site-packages/transformers/
+
+# ====================
+# Logs
+# ====================
+*.log
+
+# ====================
+# Node.js / Frontend
+# ====================
+frontend/node_modules/
+frontend/.next/
+
+# numpy / torch cache
+*.so
+*.dylib
