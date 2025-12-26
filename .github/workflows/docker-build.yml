@@ -22,8 +22,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./backend          # <- use backend folder as context
+          file: ./backend/Dockerfile  # <- Dockerfile path relative to repo root
           push: true
-          tags: nicolabuttigieg/financialqa-fullstack:latest
-
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/financialqa-fullstack:latest
