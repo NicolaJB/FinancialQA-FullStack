@@ -47,7 +47,7 @@ export default function QueryForm() {
 
   return (
     <div className="max-w-xl mx-auto p-4">
-      <h1 className="text-xl font-bold mb-2">Financial QA Query</h1>
+      <h1 className="text-5xl font-extrabold text-blue-700 mb-6 tracking-wide">Financial QA Query</h1>
       <p className="mb-4 text-gray-600">
         Enter a financial question or text snippet to search in the embedded documents.
       </p>
@@ -73,8 +73,8 @@ export default function QueryForm() {
 
       {results.length > 0 && (
         <div>
-          <h2 className="font-semibold mb-2">Results:</h2>
-          <ul className="list-disc pl-5">
+          <h2 className="font-semibold mb-2 text-gray-950">Results:</h2>
+          <ul className="list-disc pl-5 text-gray-700">
             {results.map((chunk, idx) => (
               <li key={idx} className="mb-1">{chunk}</li>
             ))}

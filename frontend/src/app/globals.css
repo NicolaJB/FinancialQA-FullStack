@@ -1,8 +1,15 @@
-@import "tailwindcss";
+/* globals.css */
 
+/* Importing Tailwind's base, components, and utilities */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme colors */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --placeholder: #a0a0a0; /* Light grey placeholder for light mode */
 }
 
 @theme inline {
@@ -16,11 +23,35 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --placeholder: #888888; /* Slightly lighter grey for dark mode */
   }
 }
 
+/* Body styling */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Geist', sans-serif;  /* Apply Geist as the primary font */
+}
+
+/* Global form element styling */
+input,
+textarea,
+select {
+  @apply w-full p-2 border border-gray-300 rounded-md text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500;
+
+  /* Placeholder color */
+  &::placeholder {
+    color: var(--placeholder);
+  }
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  @apply text-black;
+}
+
+button {
+  @apply px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500;
 }
