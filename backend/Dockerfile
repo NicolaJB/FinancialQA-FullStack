@@ -1,47 +1,31 @@
-# ---- Base Image ----
-FROM python:3.11-slim AS base
-WORKDIR /app
+name: Build and Push Docker Image
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y build-essential git curl bash \
-    && rm -rf /var/lib/apt/lists/*
+on:
+  push:
+    branches:
+      - main
 
-# ---- Stage 1: Build Frontend ----
-FROM node:20-alpine AS frontend-build
-WORKDIR /app/frontend
+jobs:
+  docker:
+    runs-on: ubuntu-latest
 
-# Install build dependencies
-RUN apk add --no-cache bash git python3 make g++
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-# Copy package files and install dependencies
-COPY frontend/package*.json ./
-COPY frontend/postcss.config.js ./
-COPY frontend/tailwind.config.js ./
-RUN npm install --legacy-peer-deps
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-# Copy frontend source
-COPY frontend ./
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-# Build frontend (no `next export` needed with `output: 'export'` in next.config.js)
-RUN npm run build
-
-# ---- Stage 2: Final Image ----
-FROM base
-WORKDIR /app/backend
-
-# Copy backend requirements and install dependencies (CPU-only)
-COPY backend/requirements.txt ./
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt \
-    && rm -rf /root/.cache/pip
-
-# Copy backend source
-COPY backend ./
-
-# Copy frontend build output
-COPY --from=frontend-build /app/frontend/out ./frontend
-
-EXPOSE 8000
-
-# Start backend
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "${PORT:-8000}"]
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend   # build context is backend folder
+          file: ./backend/Dockerfile   # path to Dockerfile
+          push: true
+          tags: nicolajb/financialqa-fullstack:latest
