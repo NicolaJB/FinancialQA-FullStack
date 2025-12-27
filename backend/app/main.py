@@ -9,9 +9,16 @@ from app.services.financialqa import pipeline
 app = FastAPI(title="Financial QA API")
 
 # Serve Next.js frontend from correct path inside container
-app.mount("/",
-          StaticFiles(directory="frontend/.next", html=True),
-          name="frontend")
+import os
+
+FRONTEND_DIR = Path("frontend/.next")
+
+if os.getenv("SERVE_FRONTEND") == "true" and FRONTEND_DIR.exists():
+    app.mount(
+        "/",
+        StaticFiles(directory=str(FRONTEND_DIR), html=True),
+        name="frontend",
+    )
 
 # API routes
 app.include_router(router=query_router, prefix="/api")
