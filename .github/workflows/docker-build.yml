@@ -22,7 +22,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./backend          # <-- point to backend folder
-          file: ./backend/Dockerfile  # <-- point to Dockerfile
+          context: ./              # Change this to root of the repo
+          file: ./backend/Dockerfile  # Still point to the Dockerfile in the backend directory
           push: true
           tags: nicolajb/financialqa-fullstack:latest
