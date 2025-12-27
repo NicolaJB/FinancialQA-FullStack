@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout your repo
+      # 1. Checkout repository
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -29,8 +29,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./backend/Dockerfile
+          context: ./backend           # build context = backend folder
+          file: ./backend/Dockerfile   # path to Dockerfile
           push: true
           tags: nicolajb/financialqa-fullstack:latest
           cache-from: type=registry,ref=nicolajb/financialqa-fullstack:latest
