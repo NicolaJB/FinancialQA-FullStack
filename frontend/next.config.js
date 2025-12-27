@@ -1,10 +1,12 @@
-// frontend/next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,  // React strict mode enabled
-  swcMinify: true,        // SWC minification enabled for production builds
+  reactStrictMode: true,
+  swcMinify: true,
 
-  // Environment variables exposed to the frontend
+  // Static export output
+  output: 'export',
+
+  // Environment variables
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
   },
