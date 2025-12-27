@@ -2,7 +2,7 @@
 FROM python:3.11-slim AS base
 WORKDIR /app
 
-# ---- Install system dependencies ----
+# Install system dependencies
 RUN apt-get update && apt-get install -y build-essential git curl bash \
     && rm -rf /var/lib/apt/lists/*
 
@@ -22,8 +22,8 @@ RUN npm install --legacy-peer-deps
 # Copy frontend source
 COPY frontend ./
 
-# Build frontend static export
-RUN npm run build && npm run export
+# Build frontend (no `next export` needed with `output: 'export'` in next.config.js)
+RUN npm run build
 
 # ---- Stage 2: Final Image ----
 FROM base
