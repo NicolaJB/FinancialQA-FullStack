@@ -25,10 +25,9 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./backend      # points to the backend folder
-          file: Dockerfile        # relative to context
+          context: ./backend       # build context is backend folder
+          file: Dockerfile         # path relative to context
           push: true
           tags: nicolajb/financialqa-fullstack:latest
           cache-from: type=registry,ref=nicolajb/financialqa-fullstack:latest
           cache-to: type=inline
-

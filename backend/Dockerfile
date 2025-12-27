@@ -1,31 +1,30 @@
-name: Build and Push Docker Image
+# ---- Base Image ----
+FROM python:3.11-slim AS base
+WORKDIR /app
 
-on:
-  push:
-    branches:
-      - main
+# Install system dependencies
+RUN apt-get update && apt-get install -y build-essential git curl bash \
+    && rm -rf /var/lib/apt/lists/*
 
-jobs:
-  docker:
-    runs-on: ubuntu-latest
+# ---- Stage 1: Build Frontend (optional: skip if building frontend separately) ----
+# Skipped for simplicity; this workflow only builds backend image
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+# ---- Stage 2: Final Image ----
+FROM base
+WORKDIR /app/backend
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+# Copy backend requirements and install dependencies (CPU-only)
+COPY backend/requirements.txt ./
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt \
+    && rm -rf /root/.cache/pip
 
-      - name: Log in to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+# Copy backend source
+COPY backend ./
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./backend   # build context is backend folder
-          file: ./backend/Dockerfile   # path to Dockerfile
-          push: true
-          tags: nicolajb/financialqa-fullstack:latest
+# Expose port for FastAPI
+EXPOSE 8000
+
+# Start backend
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "${PORT:-8000}"]
+
