@@ -10,19 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2. Log in to Docker Hub using secrets
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Build and push Docker image
+      # 3. Build and push Docker image
+      - name: Build and Push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./              # Change this to root of the repo
-          file: ./backend/Dockerfile  # Still point to the Dockerfile in the backend directory
+          context: ./                       # Root of repo
+          file: ./backend/Dockerfile        # Points to your revised Dockerfile
           push: true
           tags: nicolajb/financialqa-fullstack:latest
+          platforms: linux/amd64            # Optional: ensures compatibility with Azure

@@ -11,21 +11,19 @@ COPY frontend/package*.json ./
 COPY frontend/tailwind.config.js ./
 COPY frontend/postcss.config.js ./
 
-# Clean npm cache and install dependencies, including tailwindcss and fonts
+# Install dependencies
 RUN npm cache clean --force && \
     npm install --legacy-peer-deps && \
     npm install tailwindcss --legacy-peer-deps && \
     npm install @fontsource/geist @fontsource/geist-mono
 
-# Debug step: List the contents of the node_modules directory to check installed packages
-RUN ls -R node_modules
-
 # Copy source code
 COPY frontend/public ./public
 COPY frontend/src ./src
 
-# Build the Next.js frontend
+# Build the Next.js frontend (production build)
 RUN npm run build
+RUN npm run export   # Generates static files in /frontend/out
 
 # ---- Stage 2: Build Backend ----
 FROM python:3.11-slim AS backend-build
@@ -37,10 +35,8 @@ RUN apt-get update && apt-get install -y \
     build-essential git curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy backend requirements
+# Copy backend requirements and install
 COPY backend/requirements.txt ./
-
-# Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
@@ -55,17 +51,14 @@ WORKDIR /app
 # Copy backend from build stage
 COPY --from=backend-build /app/backend /app/backend
 
-# Copy frontend build output
-COPY --from=frontend-build /app/frontend/.next /app/frontend/.next
-COPY --from=frontend-build /app/frontend/public /app/frontend/public
-COPY --from=frontend-build /app/frontend/package*.json /app/frontend/package*.json
-COPY --from=frontend-build /app/frontend/node_modules /app/frontend/node_modules
+# Copy static frontend build
+COPY --from=frontend-build /app/frontend/out ./static
 
 # Set working directory for backend
 WORKDIR /app/backend
 
-# Expose backend port (adjust if needed)
+# Expose backend port
 EXPOSE 8000
 
-# Command to run backend
-CMD ["python", "main.py"]
+# Run FastAPI via Uvicorn
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
