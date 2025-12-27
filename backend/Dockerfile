@@ -2,16 +2,25 @@
 FROM node:20-alpine AS frontend-build
 WORKDIR /app/frontend
 
+# Allow build-time env variables
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 # Install dependencies for building
 RUN apk add --no-cache bash git python3 make g++
 
+# Copy package files and configs
 COPY frontend/package*.json ./
 COPY frontend/tailwind.config.js ./
 COPY frontend/postcss.config.js ./
+
 RUN npm install --legacy-peer-deps
 
+# Copy source code
 COPY frontend/public ./public
-COPY frontend/src ./src
+COPY frontend/app ./app  # Next 13+ "app" dir
+COPY frontend/pages ./pages  # if using pages directory
+COPY frontend/components ./components
 
 # Build + export static site
 RUN npm run build && npm run export
