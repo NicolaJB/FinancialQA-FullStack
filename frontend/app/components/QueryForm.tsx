@@ -56,7 +56,7 @@ export default function QueryForm() {
         <textarea
           className="w-full p-2 border border-gray-300 rounded mb-2"
           rows={4}
-          placeholder="Example: Summarize Tesla's Q2 2025 earnings report."
+          placeholder="Example: Summarise Tesla's Q2 2025 earnings report."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
