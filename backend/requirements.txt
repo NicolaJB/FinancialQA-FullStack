@@ -2,25 +2,20 @@
 fastapi==0.111.0
 uvicorn==0.23.2
 
-# Core ML stack (CPU only)
+# Core ML / NLP stack
 numpy<2
-torch==2.2.2+cpu      # Force CPU-only PyTorch to save space
 sentence-transformers>=5.0.0,<6.0.0
-
-# Transformers / LLMs (CPU)
 transformers==4.41.0
 accelerate==0.25.0
 sentencepiece==0.1.99
-
-# HuggingFace hub
 huggingface-hub>=0.33.4,<1.0
 
-# LangChain & HuggingFace integration
+# LangChain integration
 langchain==0.3.27
 langchain-community==0.3.27
 langchain-huggingface==0.3.1
 
-# Vector databases / embeddings (CPU)
+# Vector databases / embeddings
 chromadb==1.1.0
 faiss-cpu==1.7.4
 
