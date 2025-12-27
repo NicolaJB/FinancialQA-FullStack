@@ -18,7 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # ---- Backend dependencies ----
+      # ---- Backend dependencies (optional pre-install) ----
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -44,5 +44,3 @@ jobs:
           push: true
           tags: nicolajb/financialqa-fullstack:latest
           platforms: linux/amd64
-          build-args: |
-            BUILD_FRONTEND=true
