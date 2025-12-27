@@ -1,5 +1,5 @@
 # ---- Stage 1: Optional Frontend Build ----
-ARG BUILD_FRONTEND=false
+ARG BUILD_FRONTEND=true
 FROM node:20-alpine AS frontend-build
 WORKDIR /app/frontend
 
@@ -16,8 +16,8 @@ RUN npm install --legacy-peer-deps
 # Copy frontend source
 COPY frontend ./
 
-# Build + export only if BUILD_FRONTEND is true and frontend app exists
-RUN if [ "$BUILD_FRONTEND" = "true" ] && [ -d "./app" ]; then \
+# Build + export static site if BUILD_FRONTEND is true
+RUN if [ "$BUILD_FRONTEND" = "true" ]; then \
       npm run build && npm run export; \
     else \
       echo "Skipping frontend build"; \
@@ -43,9 +43,8 @@ WORKDIR /app/backend
 # Copy backend
 COPY --from=backend-build /app/backend /app/backend
 
-# Copy frontend static export only if it exists
-RUN mkdir -p /app/backend/frontend
-COPY --from=frontend-build /app/frontend/out /app/backend/frontend
+# Copy frontend static export
+COPY --from=frontend-build /app/frontend/out ./frontend
 
 EXPOSE 8000
 
