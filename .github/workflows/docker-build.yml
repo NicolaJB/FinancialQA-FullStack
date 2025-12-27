@@ -22,11 +22,12 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./backend       # build context = backend folder
-          file: Dockerfile         # path relative to context
+          context: .
+          file: backend/Dockerfile
           push: true
           tags: nicolajb/financialqa-fullstack:latest
           cache-from: type=registry,ref=nicolajb/financialqa-fullstack:latest
