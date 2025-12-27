@@ -43,8 +43,9 @@ WORKDIR /app/backend
 # Copy backend
 COPY --from=backend-build /app/backend /app/backend
 
-# Copy frontend static export if it exists
-COPY --from=frontend-build /app/frontend/out ./frontend 2>/dev/null || echo "No frontend export"
+# Copy frontend static export only if it exists
+RUN mkdir -p /app/backend/frontend
+COPY --from=frontend-build /app/frontend/out /app/backend/frontend
 
 EXPOSE 8000
 
