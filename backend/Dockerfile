@@ -1,39 +1,40 @@
-# ---- Stage 1: Optional Frontend Build ----
-ARG BUILD_FRONTEND=true
+# ---- Stage 1: Build Frontend ----
 FROM node:20-alpine AS frontend-build
 WORKDIR /app/frontend
 
 # Install build dependencies
 RUN apk add --no-cache bash git python3 make g++
 
-# Copy package files for caching
+# Copy only package files first to use Docker cache effectively
 COPY frontend/package*.json ./
-COPY frontend/tailwind.config.js ./
 COPY frontend/postcss.config.js ./
+COPY frontend/tailwind.config.js ./
 
+# Install npm dependencies (cached if package.json unchanged)
 RUN npm install --legacy-peer-deps
 
-# Copy frontend source
+# Copy the rest of the frontend source
 COPY frontend ./
 
-# Build + export static site if BUILD_FRONTEND is true
-RUN if [ "$BUILD_FRONTEND" = "true" ]; then \
-      npm run build && npm run export; \
-    else \
-      echo "Skipping frontend build"; \
-    fi
+# Build static frontend
+RUN npm run build && npm run export
 
 # ---- Stage 2: Build Backend ----
 FROM python:3.11-slim AS backend-build
 WORKDIR /app/backend
 
+# Install system dependencies
 RUN apt-get update && apt-get install -y build-essential git curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy only requirements.txt first to leverage caching
 COPY backend/requirements.txt ./
+
+# Install Python dependencies (cached if requirements.txt unchanged)
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
+# Copy backend source
 COPY backend ./
 
 # ---- Stage 3: Final Image ----
