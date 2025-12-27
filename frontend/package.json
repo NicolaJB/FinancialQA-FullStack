@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "export": "next export",
+    "start": "next start"
   },
   "dependencies": {
     "@fontsource/geist": "^5.2.8",
@@ -27,3 +27,4 @@
     "typescript": "^5.2.2"
   }
 }
+
