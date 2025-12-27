@@ -30,7 +30,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile
+          file: ./backend/Dockerfile
           push: true
           tags: nicolajb/financialqa-fullstack:latest
           cache-from: type=registry,ref=nicolajb/financialqa-fullstack:latest
