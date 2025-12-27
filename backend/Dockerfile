@@ -1,24 +1,27 @@
-# ---- Stage 1: Build Frontend ----
+# ---- Stage 1: Optional Frontend Build ----
+ARG BUILD_FRONTEND=false
 FROM node:20-alpine AS frontend-build
 WORKDIR /app/frontend
 
-# Install dependencies for building
+# Install build dependencies
 RUN apk add --no-cache bash git python3 make g++
 
-# Copy package files
+# Copy package files for caching
 COPY frontend/package*.json ./
 COPY frontend/tailwind.config.js ./
 COPY frontend/postcss.config.js ./
 
-# Install npm dependencies
 RUN npm install --legacy-peer-deps
 
-# Copy app code
-COPY frontend/public ./public
-COPY frontend/app ./app      # Match your actual folder structure
+# Copy frontend source
+COPY frontend ./
 
-# Build + export static site
-RUN npm run build && npm run export
+# Build + export only if BUILD_FRONTEND is true and frontend app exists
+RUN if [ "$BUILD_FRONTEND" = "true" ] && [ -d "./app" ]; then \
+      npm run build && npm run export; \
+    else \
+      echo "Skipping frontend build"; \
+    fi
 
 # ---- Stage 2: Build Backend ----
 FROM python:3.11-slim AS backend-build
@@ -27,26 +30,23 @@ WORKDIR /app/backend
 RUN apt-get update && apt-get install -y build-essential git curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy and install Python dependencies
 COPY backend/requirements.txt ./
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
-# Copy backend code
 COPY backend ./
 
 # ---- Stage 3: Final Image ----
 FROM python:3.11-slim
 WORKDIR /app/backend
 
-# Copy backend from build stage
+# Copy backend
 COPY --from=backend-build /app/backend /app/backend
 
-# Copy frontend static export
-COPY --from=frontend-build /app/frontend/out /app/frontend
+# Copy frontend static export if it exists
+COPY --from=frontend-build /app/frontend/out ./frontend 2>/dev/null || echo "No frontend export"
 
-# Expose port
 EXPOSE 8000
 
 # Start backend
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "${PORT:-8000}"]
