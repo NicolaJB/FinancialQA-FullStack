@@ -1,4 +1,32 @@
 # backend/app/routers/query.py
+"""
+Query API router for the Financial QA backend.
+
+This module defines the `/query` endpoint for retrieving
+relevant information from embedded documents using the
+Financial QA pipeline. It includes:
+
+- Request model: `QueryRequest` for validating incoming queries.
+- Endpoint: `/query` for submitting a textual query and receiving
+  a summarized response from relevant document chunks.
+
+Workflow of the `/query` endpoint:
+1. Validate that the query text is non-empty.
+2. Check if the document vector store is initialised; if not, return a
+   safe "not ready" message.
+3. Perform a similarity search on the vector store to retrieve the top-k
+   relevant document chunks.
+4. Extract text content from the retrieved chunks.
+5. Summarise the combined content using the CPU-based summariser.
+6. Return the summarised result. Any errors during processing are
+   caught and returned safely without crashing the API.
+
+Dependencies:
+- FastAPI for endpoint creation.
+- Pydantic for request validation.
+- `pipeline` from `app.services.financialqa` for vector search.
+- `cpu_summarize` from `app.services.summarizer` for summarization.
+"""
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from app.services.financialqa import pipeline
